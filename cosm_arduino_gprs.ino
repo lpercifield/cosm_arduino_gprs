@@ -41,9 +41,9 @@
 OneWire onewire(ONE_WIRE_BUS);
 DallasTemperature tempSensor(&onewire);
 
+//String feedId = "YOUR FEED ID";
+//String apiKey = "YOUR API KEY";
 
-String feedId = "YOUR FEED ID";
-String apiKey = "YOUR API KEY";
 
 DeviceAddress temp = { 0x28, 0x10, 0x6D, 0xDC, 0x3, 0x00,0x00, 0x4F};
 

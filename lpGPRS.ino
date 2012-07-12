@@ -138,35 +138,20 @@ int sendCommand(char* command, char* resp, int delayTime, int reps, int numData)
   }
   return 0;
 }
-//int sendCommand(char* command, char* resp, int delayTime, int reps, int numData){
-//  int returnVal;
-//  for(int i=0;i<reps;i++){
-//    if (i > 0) delay(500);
-//    GPRS_Serial.flush();
-//    GPRS_Serial.println(command);
-//    Serial.print(command);
-//    Serial.print(": ");
-////    Serial.print("sizeof: ");
-////    Serial.println(resp);
-//    delay(delayTime);
-//    while(GPRS_Serial.available()>sizeof(resp))  {
-//      readline();
-//      if (strncmp(buffer, resp,numData) == 0) {
-//        Serial.println(buffer);
-//        return 1;
-//      }
-//    }
-//    Serial.println("FAILED");
-//  }
-//  return 0;
-//}
+
 void readline() {
+  memset(buffer,0,sizeof(buffer));
   char c;
   int i =0;
   buffidx = 0; // start at begninning
   //Serial.println("BEFORE READLINE");
+  long previousMillis = millis();
   while (1) {
-    i++;
+      unsigned long currentMillis = millis();
+      if(currentMillis - previousMillis > 20000) {
+        Serial.println("TIMEOUT");
+        return;
+      }
     delay(2);
     c=GPRS_Serial.read();
     //Serial.print(buffidx);
@@ -195,11 +180,13 @@ void powerOn(){
     digitalWrite(9,HIGH);
     delay(2000);
     digitalWrite(9,LOW);
+    delay(4000);
     //delay(15500);
-    while(sendCommand("AT+CREG?","+CREG: 0,1",500,5,10) == 0){
-      Serial.print(".");
+    if(sendCommand("AT+CREG?","+CREG: 0,1",500,10,10)==1){
+      Serial.println("REGISTERED");
+      //Serial.print(".");
     }
-    Serial.println("REGISTERED");
+    
     power = true;
     setupCommands();
   }
